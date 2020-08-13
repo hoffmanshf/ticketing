@@ -1,0 +1,37 @@
+# this specifies the set of objects we want k8s to look at, deployment belongs to bucket v1
+apiVersion: apps/v1
+# the type of object we want to create
+kind: Deployment
+# config options for the object about to create
+metadata:
+  name: auth-depl
+# The exact attributes we want to apply to the object we are about to create
+spec:
+  # number of pods we want to create
+  replicas: 1
+  selector:
+    matchLabels:
+      app: auth
+  # specify the exact configuration of a pod that we want this deployment to create
+  template:
+    metadata:
+      labels:
+        app: auth
+    spec:
+      containers:
+        - name: auth
+          # kubernetes will by default go to Docker hub and look for docker image if no version is specified
+          image: hoffmanshf/ticketing-auth
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: auth-srv
+spec:
+  selector:
+    app: auth
+  ports:
+    - name: auth
+      protocol: TCP
+      port: 3000
+      targetPort: 3000
