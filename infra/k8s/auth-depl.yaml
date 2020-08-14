@@ -22,6 +22,14 @@ spec:
         - name: auth
           # kubernetes will by default go to Docker hub and look for docker image if no version is specified
           image: hoffmanshf/ticketing-auth
+          env:
+            # run following command to create a generic secret in Kubernetes
+            # kubectl create secret generic jwt-secret --from-literal=JWT_KEY=asdf
+            - name: JWT_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: jwt-secret
+                  key: JWT_KEY
 ---
 apiVersion: v1
 kind: Service

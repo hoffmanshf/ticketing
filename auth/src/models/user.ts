@@ -1,38 +1,48 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 import { Password } from '../services/password';
 
-// an interface that describes the properties
-// that are required to create a new User
-interface UserAttributes {
+// An interface that describes the properties
+// that are requried to create a new User
+interface UserAttrs {
   email: string;
   password: string;
 }
 
-// an interface that describes the properties
-// that a User model(entire user collection) has
+// An interface that describes the properties
+// that a User Model has
 interface UserModel extends mongoose.Model<UserDoc> {
-  build(attributes: UserAttributes): UserDoc;
+  build(attrs: UserAttrs): UserDoc;
 }
 
-// an interface that describes the properties
-// that a User document has
+// An interface that describes the properties
+// that a User Document has
 interface UserDoc extends mongoose.Document {
-  email: String;
-  password: String;
+  email: string;
+  password: string;
 }
 
-const userSchema = new mongoose.Schema({
-  email: {
-    // typescript type of String is string
-    // mongoose type of String is String
-    type: String,
-    required: true,
+const userSchema = new mongoose.Schema(
+  {
+    email: {
+      type: String,
+      required: true
+    },
+    password: {
+      type: String,
+      required: true
+    }
   },
-  password: {
-    type: String,
-    required: true,
-  },
-});
+  {
+    toJSON: {
+      transform(doc, ret) {
+        ret.id = ret._id;
+        delete ret._id;
+        delete ret.password;
+        delete ret.__v;
+      }
+    }
+  }
+);
 
 userSchema.pre('save', async function(done) {
   if (this.isModified('password')) {
@@ -42,16 +52,10 @@ userSchema.pre('save', async function(done) {
   done();
 });
 
-userSchema.statics.build = (attributes: UserAttributes) => {
-  return new User(attributes);
+userSchema.statics.build = (attrs: UserAttrs) => {
+  return new User(attrs);
 };
 
-// <> is the generic syntax in typescript
-const User = mongoose.model<UserDoc, UserModel>("User", userSchema);
-
-// not ideal: every time use buildUser needs to import User and buildUser
-// const buildUser = (attributes: UserAttributes) => {
-//   return new User(attributes);
-// };
+const User = mongoose.model<UserDoc, UserModel>('User', userSchema);
 
 export { User };
