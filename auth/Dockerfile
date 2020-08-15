@@ -2,7 +2,8 @@ FROM node:alpine
 
 WORKDIR /app
 COPY package.json ./
-RUN npm install
+# avoid downloading dev depedency every time the image is rebuilt
+RUN npm install --only=prod
 COPY . .
 
 CMD ["npm", "start"]
