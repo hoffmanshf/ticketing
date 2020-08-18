@@ -46,8 +46,9 @@ afterAll(async () => {
 // create a global function to avoid import from setup file in every test suite
 global.signin = () => {
   // build a jwt payload
+  // randomly generate a random user id
   const payload = {
-    id: "324bhjb12h4",
+    id: new mongoose.Types.ObjectId().toHexString(),
     email: "test@test.com",
   };
 
