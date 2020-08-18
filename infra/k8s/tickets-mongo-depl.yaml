@@ -4,44 +4,35 @@ apiVersion: apps/v1
 kind: Deployment
 # config options for the object about to create
 metadata:
-  name: auth-depl
+  name: tickets-mongo-depl
 # The exact attributes we want to apply to the object we are about to create
 spec:
   # number of pods we want to create
   replicas: 1
   selector:
     matchLabels:
-      app: auth
+      app: tickets-mongo
   # specify the exact configuration of a pod that we want this deployment to create
   template:
     metadata:
+      # label gets applied to the pod
       labels:
-        app: auth
+        app: tickets-mongo
     spec:
       containers:
-        - name: auth
+        - name: tickets-mongo
           # kubernetes will by default go to Docker hub and look for docker image if no version is specified
-          image: hoffmanshf/ticketing-auth
-          env:
-            # run following command to create a generic secret in Kubernetes
-            # kubectl create secret generic jwt-secret --from-literal=JWT_KEY=asdf
-            - name: JWT_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: jwt-secret
-                  key: JWT_KEY
-            - name: MONGO_URI
-              value: 'mongodb://auth-mongo-srv:27017/auth'
+          image: mongo
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: auth-srv
+  name: tickets-mongo-srv
 spec:
   selector:
-    app: auth
+    app: tickets-mongo
   ports:
-    - name: auth
+    - name: db
       protocol: TCP
-      port: 3000
-      targetPort: 3000
+      port: 27017
+      targetPort: 27017
