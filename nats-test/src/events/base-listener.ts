@@ -1,10 +1,20 @@
 import { Message, Stan } from "node-nats-streaming";
+import { Subjects } from "./subjects";
 
-export abstract class Listener {
-  abstract subject: string;
+interface Event {
+  subject: Subjects;
+  data: any;
+}
+
+// when we instantiate the Listener, we need to provide some custom type in <>
+export abstract class Listener<T extends Event> {
+  // abstract subject: string;
+  abstract subject: T["subject"];
   abstract queueGroupName: string;
   // function to return when message is received
-  abstract onMessage(data: any, msg: Message): void;
+  // abstract onMessage(data: any, msg: Message): void;
+  abstract onMessage(data: T["data"], msg: Message): void;
+
   private client: Stan;
   // default wait time is 5 seconds
   protected ackWait = 5 * 1000;
