@@ -15,7 +15,7 @@ declare global {
 }
 
 // redirect import to a fake NATS client
-jest.mock("../nats-wrapper")
+jest.mock("../nats-wrapper");
 
 let mongo: any;
 // before all the tests run
@@ -32,6 +32,8 @@ beforeAll(async () => {
 
 // before each test runs
 beforeEach(async () => {
+  // reset data for mock nats wrapper
+  jest.clearAllMocks();
   const collections = await mongoose.connection.db.collections();
 
   // delete all collections in mongodb before each test
