@@ -1,8 +1,6 @@
 import { MongoMemoryServer } from "mongodb-memory-server";
 import mongoose from "mongoose";
-import request from "supertest";
 import jwt from "jsonwebtoken";
-import { app } from "../app";
 
 // augment the type definition of NodeJS Global field
 declare global {
@@ -20,6 +18,8 @@ let mongo: any;
 // before all the tests run
 beforeAll(async () => {
   process.env.JWT_KEY = "asdfgh";
+  process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+
   mongo = new MongoMemoryServer();
   const mongoUri = await mongo.getUri();
 
