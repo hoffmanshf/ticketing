@@ -14,6 +14,7 @@ interface TicketDoc extends mongoose.Document {
   price: number;
   userId: string;
   version: number;
+  orderId?: string;
 }
 
 // build function is used to enforce type check
@@ -34,6 +35,9 @@ const ticketSchema = new mongoose.Schema(
     userId: {
       type: String,
       required: true,
+    },
+    orderId: {
+      type: String,
     },
   },
   // when transformed to JSON, replace _id with id
