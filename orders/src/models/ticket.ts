@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import { Order, OrderStatus } from "./order";
 
 interface TicketAttrs {
+  id: string;
   title: string;
   price: number;
 }
@@ -45,7 +46,13 @@ const ticketSchema = new mongoose.Schema(
 
 // add build method to ticket model directly
 ticketSchema.statics.build = (attrs: TicketAttrs) => {
-  return new Ticket(attrs);
+  return new Ticket({
+    // Notice: this transformation is critical since id will be not be recognized by mongo
+    // if we don't do mapping here, a _id will be randomly generated instead
+    _id: attrs.id,
+    title: attrs.title,
+    price: attrs.price,
+  });
 };
 
 // add isReserved method to ticket document directly
