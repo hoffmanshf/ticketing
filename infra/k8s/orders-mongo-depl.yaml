@@ -1,0 +1,38 @@
+# this specifies the set of objects we want k8s to look at, deployment belongs to bucket v1
+apiVersion: apps/v1
+# the type of object we want to create
+kind: Deployment
+# config options for the object about to create
+metadata:
+  name: orders-mongo-depl
+# The exact attributes we want to apply to the object we are about to create
+spec:
+  # number of pods we want to create
+  replicas: 1
+  selector:
+    matchLabels:
+      app: orders-mongo
+  # specify the exact configuration of a pod that we want this deployment to create
+  template:
+    metadata:
+      # label gets applied to the pod
+      labels:
+        app: orders-mongo
+    spec:
+      containers:
+        - name: orders-mongo
+          # kubernetes will by default go to Docker hub and look for docker image if no version is specified
+          image: mongo
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: orders-mongo-srv
+spec:
+  selector:
+    app: orders-mongo
+  ports:
+    - name: db
+      protocol: TCP
+      port: 27017
+      targetPort: 27017

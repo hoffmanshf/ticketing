@@ -6,12 +6,15 @@ interface TicketAttrs {
   userId: string;
 }
 
+// properties used to create a ticket might be diff from properties end up on ticket
+// e.g.g updated_at deleted_at
 interface TicketDoc extends mongoose.Document {
   title: string;
   price: number;
   userId: string;
 }
 
+// build function is used to enforce type check
 interface TicketModel extends mongoose.Model<TicketDoc> {
   build(attrs: TicketAttrs): TicketDoc;
 }
@@ -31,7 +34,8 @@ const ticketSchema = new mongoose.Schema(
       required: true,
     },
   },
-  {
+    // when transformed to JSON, replace _id with id
+    {
     toJSON: {
       transform(doc, ret) {
         ret.id = ret._id;
