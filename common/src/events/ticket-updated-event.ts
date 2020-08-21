@@ -8,5 +8,7 @@ export interface TicketUpdatedEvent {
         title: string;
         price: number;
         userId: string;
+        // optional
+        orderId?: string;
     };
 }

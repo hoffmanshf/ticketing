@@ -15,7 +15,8 @@ export abstract class Listener<T extends Event> {
   // abstract onMessage(data: any, msg: Message): void;
   abstract onMessage(data: T["data"], msg: Message): void;
 
-  private client: Stan;
+  // we can use protected access modifier to allow access in child class
+  protected client: Stan;
   // default wait time is 5 seconds
   protected ackWait = 5 * 1000;
 
