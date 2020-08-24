@@ -1,0 +1,38 @@
+# this specifies the set of objects we want k8s to look at, deployment belongs to bucket v1
+apiVersion: apps/v1
+# the type of object we want to create
+kind: Deployment
+# config options for the object about to create
+metadata:
+  name: expiration-redis-depl
+# The exact attributes we want to apply to the object we are about to create
+spec:
+  # number of pods we want to create
+  replicas: 1
+  selector:
+    matchLabels:
+      app: expiration-redis
+  # specify the exact configuration of a pod that we want this deployment to create
+  template:
+    metadata:
+      # label gets applied to the pod
+      labels:
+        app: expiration-redis
+    spec:
+      containers:
+        - name: expiration-redis
+          # kubernetes will by default go to Docker hub and look for docker image if no version is specified
+          image: redis
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: expiration-redis-srv
+spec:
+  selector:
+    app: expiration-redis
+  ports:
+    - name: db
+      protocol: TCP
+      port: 6379
+      targetPort: 6379

@@ -1,0 +1,36 @@
+# this specifies the set of objects we want k8s to look at, deployment belongs to bucket v1
+apiVersion: apps/v1
+# the type of object we want to create
+kind: Deployment
+# config options for the object about to create
+metadata:
+  name: expiration-depl
+# The exact attributes we want to apply to the object we are about to create
+spec:
+  # number of pods we want to create
+  replicas: 1
+  selector:
+    matchLabels:
+      app: expiration
+  # specify the exact configuration of a pod that we want this deployment to create
+  template:
+    metadata:
+      labels:
+        app: expiration
+    spec:
+      containers:
+        - name: expiration
+          # kubernetes will by default go to Docker hub and look for docker image if no version is specified
+          image: hoffmanshf/ticketing-expiration
+          env:
+            # we need an unique id for each NATS client, we can use name of pod for this purpose
+            - name: NATS_CLIENT_ID
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: NATS_URL
+              value: 'http://nats-srv:4222'
+            - name: NATS_CLUSTER_ID
+              value: ticketing
+            - name: REDIS-HOST
+              value: expiration-redis-srv
