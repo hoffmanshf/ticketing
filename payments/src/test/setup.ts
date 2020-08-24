@@ -1,14 +1,12 @@
 import { MongoMemoryServer } from "mongodb-memory-server";
 import mongoose from "mongoose";
-import request from "supertest";
 import jwt from "jsonwebtoken";
-import { app } from "../app";
 
 // augment the type definition of NodeJS Global field
 declare global {
   namespace NodeJS {
     interface Global {
-      signin(): string[];
+      signin(id?: string): string[];
     }
   }
 }
@@ -16,10 +14,14 @@ declare global {
 // redirect import to a fake NATS client
 jest.mock("../nats-wrapper");
 
+process.env.STRIPE_KEY = "YOUR_STRIPE_SECRET_KEY";
+
 let mongo: any;
 // before all the tests run
 beforeAll(async () => {
   process.env.JWT_KEY = "asdfgh";
+  process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+
   mongo = new MongoMemoryServer();
   const mongoUri = await mongo.getUri();
 
@@ -43,16 +45,15 @@ beforeEach(async () => {
 
 // after all tests are complete
 afterAll(async () => {
-  await mongo.stop;
+  await mongo.stop();
   await mongoose.connection.close();
 });
 
-// create a global function to avoid import from setup file in every test suite
-global.signin = () => {
+global.signin = (id?: string) => {
   // build a jwt payload
   // randomly generate a random user id
   const payload = {
-    id: new mongoose.Types.ObjectId().toHexString(),
+    id: id || new mongoose.Types.ObjectId().toHexString(),
     email: "test@test.com",
   };
 

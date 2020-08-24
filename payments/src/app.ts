@@ -7,6 +7,7 @@ import {
   NotFoundError,
   currentUser,
 } from "@hoffmanshf-ticketing/common";
+import { createChargeRouter } from "./routes/new";
 
 const app = express();
 app.set("trust proxy", true);
@@ -19,6 +20,8 @@ app.use(
 );
 // cookie session must run first before current-user middleware
 app.use(currentUser);
+// currentUser must run before other routers to avoid unauthorized error
+app.use(createChargeRouter);
 
 app.all("*", async (req, res) => {
   throw new NotFoundError();
