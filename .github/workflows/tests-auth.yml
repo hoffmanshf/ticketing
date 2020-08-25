@@ -20,4 +20,4 @@ jobs:
     - uses: actions/checkout@v2
 
     - name: Run tests for auth module
-      run: cd auth && npm install && npm run test:ci
+      run: cd auth && npm install && npm run test:ci --exit
