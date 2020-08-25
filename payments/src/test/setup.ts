@@ -14,6 +14,7 @@ declare global {
 // redirect import to a fake NATS client
 jest.mock("../nats-wrapper");
 
+// set STRIPE_KEY in env variable
 process.env.STRIPE_KEY = "YOUR_STRIPE_SECRET_KEY";
 
 let mongo: any;
